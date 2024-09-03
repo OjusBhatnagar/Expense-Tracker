@@ -1,0 +1,44 @@
+import pandas as pd
+from datetime import datetime
+
+# Load existing expenses or create a new file
+try:
+    expenses_df = pd.read_csv('expenses.csv')
+except FileNotFoundError:
+    expenses_df = pd.DataFrame(columns=['Date', 'Category', 'Amount'])
+
+def add_expense(date, category, amount):
+    global expenses_df
+    new_expense = pd.DataFrame([[date, category, amount]], columns=['Date', 'Category', 'Amount'])
+    expenses_df = pd.concat([expenses_df, new_expense], ignore_index=True)
+    expenses_df.to_csv('expenses.csv', index=False)
+    print(f"Added expense: {amount} in {category} on {date}")
+
+def show_summary():
+    summary = expenses_df.groupby('Category').sum()
+    print("\nExpense Summary by Category:")
+    print(summary)
+
+# Main loop for user interaction
+while True:
+    print("\nPersonal Expense Tracker")
+    print("1. Add Expense")
+    print("2. Show Summary")
+    print("3. Exit")
+    choice = input("Choose an option: ")
+
+    if choice == '1':
+        date = input("Enter the date (YYYY-MM-DD): ")
+        category = input("Enter the category (e.g., Food, Transport, Entertainment): ")
+        amount = float(input("Enter the amount: "))
+        add_expense(date, category, amount)
+
+    elif choice == '2':
+        show_summary()
+
+    elif choice == '3':
+        print("Exiting the tracker. Goodbye!")
+        break
+
+    else:
+        print("Invalid choice. Please choose a valid option.")
